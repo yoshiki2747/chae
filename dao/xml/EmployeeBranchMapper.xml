@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.totalcall.dao.mapper.EmployeeBranchMapper">
+	
+	<resultMap id="EmployeeCardBranchResultMap" type="kr.totalcall.dao.model.EmployeeCardBranch">
+		<id column="num" jdbcType="INTEGER" property="num" />
+		<result column="branch_num" jdbcType="INTEGER" property="branchNum" />
+		<result column="branch_name" jdbcType="VARCHAR" property="branchName" />
+		<result column="vnum" jdbcType="VARCHAR" property="vnum" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="id" jdbcType="VARCHAR" property="id" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="work_type" jdbcType="VARCHAR" property="workType" />
+		<result column="vehicle" jdbcType="VARCHAR" property="vehicle" />
+		<result column="vehicle_num" jdbcType="VARCHAR" property="vehicleNum" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="tel" jdbcType="VARCHAR" property="tel" />
+		<result column="jumin" jdbcType="VARCHAR" property="jumin" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="memo" jdbcType="VARCHAR" property="memo" />
+		<result column="in_date" jdbcType="VARCHAR" property="inDate" />
+		<result column="out_date" jdbcType="VARCHAR" property="outDate" />
+		<result column="rework_date" jdbcType="VARCHAR" property="reworkDate" />
+		<result column="stop_datetime" jdbcType="VARCHAR" property="stopDatetime" />
+		<result column="stop_chk" jdbcType="INTEGER" property="stopChk" />
+		<result column="out_chk" jdbcType="INTEGER" property="outChk" />
+		<result column="license" jdbcType="VARCHAR" property="license" />
+		<result column="license_num" jdbcType="VARCHAR" property="licenseNum" />
+		<result column="latitude" jdbcType="DOUBLE" property="latitude" />
+		<result column="longitude" jdbcType="DOUBLE" property="longitude" />
+		<result column="location" jdbcType="VARCHAR" property="location" />
+		<result column="state" jdbcType="VARCHAR" property="state" />
+		<result column="county" jdbcType="VARCHAR" property="county" />
+		<result column="town" jdbcType="VARCHAR" property="town" />
+		<result column="login_datetime" jdbcType="TIMESTAMP" property="loginDatetime" />
+		<result column="refresh_datetime" jdbcType="TIMESTAMP" property="refreshDatetime" />
+		<result column="gps_datetime" jdbcType="TIMESTAMP" property="gpsDatetime" />
+		<result column="auto_target1" jdbcType="VARCHAR" property="autoTarget1" />
+		<result column="auto_target2" jdbcType="VARCHAR" property="autoTarget2" />
+		<result column="auto_target3" jdbcType="VARCHAR" property="autoTarget3" />
+		<result column="auto_target4" jdbcType="VARCHAR" property="autoTarget4" />
+		<result column="auto_target5" jdbcType="VARCHAR" property="autoTarget5" />
+		<result column="login" jdbcType="INTEGER" property="login" />
+		<result column="notice_num" jdbcType="INTEGER" property="noticeNum" />
+		<result column="chk_internet" jdbcType="INTEGER" property="chkInternet" />
+		<result column="message_chk" jdbcType="INTEGER" property="messageChk" />
+		<result column="keyphone" jdbcType="VARCHAR" property="keyphone" />
+		<result column="charge" jdbcType="INTEGER" property="charge" />
+		<result column="default_charge" jdbcType="INTEGER" property="defaultCharge" />
+		<result column="auto_send_money_yn" jdbcType="VARCHAR" property="autoSendMoneyYn" />
+		<result column="withholding_yn" jdbcType="VARCHAR" property="withholdingYn" />
+		<result column="fee_type" jdbcType="VARCHAR" property="feeType" />
+		<result column="fee_type_modify_date" jdbcType="TIMESTAMP" property="feeTypeModifyDate" />
+		<result column="bank_code" jdbcType="VARCHAR" property="bankCode" />
+		<result column="account" jdbcType="VARCHAR" property="account" />
+		<result column="account_name" jdbcType="VARCHAR" property="accountName" />
+		<result column="out_charge_account_num" jdbcType="INTEGER" property="outChargeAccountNum" />
+		<result column="vbank_code" jdbcType="VARCHAR" property="vbankCode" />
+		<result column="vaccount" jdbcType="VARCHAR" property="vaccount" />
+		<result column="card_num" jdbcType="VARCHAR" property="cardNum" />
+		<result column="cona_card_num" jdbcType="VARCHAR" property="conaCardNum" />
+		<result column="company_yn" jdbcType="VARCHAR" property="companyYn" />
+	</resultMap>
+	
+	<resultMap id="EmployeeBranchResultMap" type="map">
+		<id column="num" jdbcType="INTEGER" property="num" />
+		<result column="vnum" jdbcType="VARCHAR" property="vnum" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="id" jdbcType="VARCHAR" property="id" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="work_type" jdbcType="VARCHAR" property="workType" />
+		<result column="vehicle" jdbcType="VARCHAR" property="vehicle" />
+		<result column="vehicle_num" jdbcType="VARCHAR" property="vehicleNum" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="tel" jdbcType="VARCHAR" property="tel" />
+		<result column="jumin" jdbcType="VARCHAR" property="jumin" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="memo" jdbcType="VARCHAR" property="memo" />
+		<result column="in_date" jdbcType="VARCHAR" property="inDate" />
+		<result column="out_date" jdbcType="VARCHAR" property="outDate" />
+		<result column="rework_date" jdbcType="VARCHAR" property="reworkDate" />
+		<result column="stop_datetime" jdbcType="VARCHAR" property="stopDatetime" />
+		<result column="stop_chk" jdbcType="INTEGER" property="stopChk" javaType="int" />
+		<result column="out_chk" jdbcType="INTEGER" property="outChk" javaType="int" />
+		<result column="license" jdbcType="VARCHAR" property="license" />
+		<result column="license_num" jdbcType="VARCHAR" property="licenseNum" />
+		<result column="latitude" jdbcType="DOUBLE" property="latitude" />
+		<result column="longitude" jdbcType="DOUBLE" property="longitude" />
+		<result column="location" jdbcType="VARCHAR" property="location" />
+		<result column="state" jdbcType="VARCHAR" property="state" />
+		<result column="county" jdbcType="VARCHAR" property="county" />
+		<result column="town" jdbcType="VARCHAR" property="town" />
+		<result column="login_datetime" jdbcType="TIMESTAMP" property="loginDatetime" />
+		<result column="refresh_datetime" jdbcType="TIMESTAMP" property="refreshDatetime" />
+		<result column="gps_datetime" jdbcType="TIMESTAMP" property="gpsDatetime" />
+		<result column="auto_target1" jdbcType="VARCHAR" property="autoTarget1" />
+		<result column="auto_target2" jdbcType="VARCHAR" property="autoTarget2" />
+		<result column="auto_target3" jdbcType="VARCHAR" property="autoTarget3" />
+		<result column="auto_target4" jdbcType="VARCHAR" property="autoTarget4" />
+		<result column="auto_target5" jdbcType="VARCHAR" property="autoTarget5" />
+		<result column="login" jdbcType="INTEGER" property="login" javaType="int" />
+		<result column="notice_num" jdbcType="INTEGER" property="noticeNum" />
+		<result column="chk_internet" jdbcType="INTEGER" property="chkInternet" javaType="int" />
+		<result column="message_chk" jdbcType="INTEGER" property="messageChk" javaType="int" />
+		<result column="keyphone" jdbcType="VARCHAR" property="keyphone" />
+		<result column="charge" jdbcType="INTEGER" property="charge" />
+		<result column="default_charge" jdbcType="INTEGER" property="defaultCharge" />
+		<result column="auto_send_money_yn" jdbcType="VARCHAR" property="autoSendMoneyYn" />
+		<result column="withholding_yn" jdbcType="VARCHAR" property="withholdingYn" />
+		<result column="fee_type" jdbcType="VARCHAR" property="feeType" />
+		<result column="fee_type_modify_date" jdbcType="TIMESTAMP" property="feeTypeModifyDate" />
+		<result column="bank_code" jdbcType="VARCHAR" property="bankCode" />
+		<result column="account" jdbcType="VARCHAR" property="account" />
+		<result column="account_name" jdbcType="VARCHAR" property="accountName" />
+		<result column="out_charge_account_num" jdbcType="INTEGER" property="outChargeAccountNum" />
+		<result column="vbank_code" jdbcType="VARCHAR" property="vbankCode" />
+		<result column="vaccount" jdbcType="VARCHAR" property="vaccount" />
+		<result column="bank_name" jdbcType="VARCHAR" property="bankName" />
+		<result column="vbank_name" jdbcType="VARCHAR" property="vbankName" />
+		<result column="branch_num" jdbcType="INTEGER" property="branchNum" />
+		<result column="branch_name" jdbcType="VARCHAR" property="branchName" />
+		<result column="branch_tel" jdbcType="VARCHAR" property="branchTel" />
+	</resultMap>
+	
+	<select id="selectBranchName" parameterType="map" resultType="String">
+		SELECT
+				b.name AS branchName
+			FROM
+				employee e, branch b
+			WHERE e.branch_num = b.num
+			AND e.id = #{employeeId}
+		<if test="employeeNum != 0">
+			<![CDATA[
+				AND e.num <> #{employeeNum}
+			]]>
+		</if>
+	</select>
+	
+	<select id="selectEmployee" parameterType="map" resultMap="EmployeeCardBranchResultMap">
+		SELECT
+			e.num
+			, b.num AS branch_num
+			, b.name AS branch_name
+			, e.vnum, e.name, e.id, e.password
+			, e.work_type, e.vehicle, e.vehicle_num
+			, e.phone, e.tel, e.jumin
+			, e.address, e.memo, e.in_date, e.out_date
+			, e.rework_date, e.stop_datetime
+			, e.stop_chk, e.out_chk
+			, e.license, e.license_num
+			, e.latitude, e.longitude, e.location
+			, e.state, e.county, e.town
+			, e.login_datetime, e.refresh_datetime
+			, e.gps_datetime
+			, e.auto_target1, e.auto_target2
+			, e.auto_target3, e.auto_target4
+			, e.auto_target5
+			, e.login, e.notice_num, e.chk_internet
+			, e.message_chk, e.keyphone
+			, e.charge, e.default_charge
+			, e.auto_send_money_yn
+			, e.withholding_yn, e.fee_type
+			, e.fee_type_modify_date, e.bank_code
+			, e.account, e.account_name
+			, e.out_charge_account_num
+			, e.vbank_code, e.vaccount
+			, IFNULL(ecm.card_num, '') AS card_num
+			, IFNULL((SELECT token FROM q25hq25h.cona_card WHERE employee_num = e.num AND del = 0), '') AS cona_card_num
+			, e.company_yn
+		FROM
+			employee e
+		LEFT OUTER JOIN
+			employee_card_max ecm
+				ON ecm.employee_num = e.num
+			, branch b
+		WHERE e.branch_num = b.num
+		AND e.del = 0
+		<if test="branchNum != 0">
+			AND b.num = #{branchNum}
+		</if>
+		<if test="callgroupNum != 0">
+			AND b.callgroup_num = #{callgroupNum}
+		</if>
+		<choose>
+			<when test="workType == 1">
+				AND e.work_type = '최고관리자'
+			</when>
+			<when test="workType == 2">
+				AND e.work_type = '관리자'
+			</when>
+			<when test="workType == 3">
+				AND e.work_type = '접수자'
+			</when>
+			<when test="workType == 4">
+				AND ( e.work_type = '기사' OR e.work_type = '픽업맨' )
+			</when>
+		</choose>
+		<if test="!''.equals(vehicle)">
+			AND e.vehicle IN (${vehicle})
+		</if>
+		<choose>
+			<when test="workStatusType == 0">
+				AND e.stop_chk = '0' AND e.out_chk = '0'
+			</when>
+			<when test="workStatusType == 1">
+				AND e.stop_chk = '1' AND e.out_chk = '0'
+			</when>
+			<when test="workStatusType == 2">
+				AND e.out_chk = '1'
+			</when>
+		</choose>
+		<if test="!''.equals(searchWord)">
+			AND
+				(
+					e.num = #{searchWord}
+					OR e.vnum = #{searchWord}
+					OR e.name LIKE '%${searchWord}%'
+					OR e.id = #{searchWord}
+					OR e.phone = #{searchWord}
+				)
+		</if>
+		ORDER BY CAST(e.vnum AS UNSIGNED) ASC
+	</select>
+	
+	<select id="selectDriverByNum" parameterType="int" resultMap="EmployeeBranchResultMap">
+		SELECT
+			e.num
+			, e.vnum, e.name, e.id, e.password
+			, e.work_type
+			, e.vehicle
+			, e.vehicle_num
+			, e.phone, e.tel, e.jumin
+			, e.address, e.memo
+			, e.in_date
+			, e.out_date
+			, e.rework_date
+			, e.stop_datetime
+			, e.stop_chk
+			, e.out_chk
+			, e.license
+			, e.license_num AS licenseNum
+			, e.latitude, e.longitude, e.location
+			, e.state, e.county, e.town
+			, e.login_datetime
+			, e.refresh_datetime
+			, e.gps_datetime
+			, e.auto_target1
+			, e.auto_target2
+			, e.auto_target3
+			, e.auto_target4
+			, e.auto_target5
+			, e.login
+			, e.notice_num
+			, e.chk_internet
+			, e.message_chk
+			, e.keyphone
+			, e.charge
+			, e.default_charge
+			, e.auto_send_money_yn
+			, e.withholding_yn
+			, e.fee_type
+			, e.fee_type_modify_date
+			, IFNULL(e.bank_code, '') AS bank_code
+			, IFNULL(e.account, '') AS account
+			, IFNULL(e.account_name, '') AS account_name
+			, e.out_charge_account_num
+			, IFNULL(e.vbank_code, '') AS vbank_code
+			, IFNULL(e.vaccount, '') AS vaccount
+			, IFNULL(ab.bank_name, '') AS bank_name
+			, IFNULL(vb.bank_name, '') AS vbank_name
+			, b.num AS branch_num
+			, b.name AS branch_name
+			, b.tel AS branch_tel
+		FROM
+			employee e
+		LEFT OUTER JOIN
+			bank ab
+				ON ab.bank_code = e.bank_code
+		LEFT OUTER JOIN
+			bank vb
+				ON vb.bank_code = e.vbank_code
+			, branch b
+		WHERE e.branch_num = b.num
+		AND e.num = #{employeeNum}
+		<!-- AND e.work_type = '기사' -->
+		AND e.stop_chk = 0
+		AND e.out_chk = 0
+		AND e.del = 0
+		AND e.bak = 0
+	</select>
+	
+	<select id="selectEmployeeByKeyphone" parameterType="map" resultType="map">
+		SELECT
+			e.num, e.name, e.id
+			, e.work_type AS workType
+			, b.num AS branchNum
+			, b.callgroup_num AS callgroupNum
+		FROM
+			employee e, branch b
+		WHERE e.branch_num = b.num
+		AND e.keyphone = #{keyphoneNum}
+		AND e.stop_chk = 0
+		AND e.out_chk = 0
+		AND e.del = 0
+		AND b.callgroup_num = (SELECT callgroup_num FROM branch WHERE num = #{branchNum})
+	</select>
+	
+	<select id="selectOtherEmployeeByKeyphone" parameterType="map" resultType="int">
+		SELECT
+			e.num
+		FROM
+			employee e, branch b
+		WHERE e.branch_num = b.num
+		AND e.keyphone = #{keyphoneNum}
+		AND e.num != #{employeeNum}
+		AND b.callgroup_num = #{callgroupNum}
+	</select>
+	
+	<select id="selectEmployeeWithholding" parameterType="map" resultType="map">
+		SELECT
+			b.name AS branchName
+			, e.vnum AS employeeVnum, e.name AS employeeName
+			, e.jumin AS employeeJumin, e.id AS employeeId, e.memo AS employeeMemo
+			, e.in_date AS inDate, e.out_date AS outDate
+			, ba.bank_name AS bankName, morc.account
+			, morc.amt AS reqAmt, morc.withholding, (morc.amt - morc.withholding) AS sendAmt
+			, morc.update_dttm AS updateDttm
+		FROM money_out_req_cron morc, employee e, branch b, bank ba
+		WHERE morc.req_gbn = 'E'
+		AND morc.result = 1
+		<![CDATA[
+		AND morc.withholding > 0
+		]]>
+		AND morc.req_num = e.num
+		AND e.withholding_report_yn = 'Y'
+		AND e.branch_num = b.num
+		<if test="branchCallGroupNum != 0">
+			AND b.callgroup_num = #{branchCallGroupNum}
+		</if>
+		<if test="branchCallGroupNum == 0">
+			AND b.num = #{branchNum}
+		</if>
+		AND morc.bank_code = ba.bank_code
+		AND morc.update_dttm
+			BETWEEN STR_TO_DATE('${startMonth}01 000000', '%Y%m%d %H%i%S')
+			AND STR_TO_DATE(CONCAT(LAST_DAY(CONCAT(#{endMonth}, '01')), '23:59:59'), '%Y-%m-%d %H:%i:%S')
+		ORDER BY b.num, e.num, morc.update_dttm
+	</select>
+	
+	<update id="updateEmployeeLocation" parameterType="map">
+		UPDATE
+			employee
+		SET latitude = #{latitude}
+			, longitude = #{longitude}
+			, state = #{state}
+			, county = #{county}
+			, town = #{town}
+			, location = '${state} ${county} ${town}'
+			, refresh_datetime = NOW()
+			, gps_datetime = NOW()
+		where num = #{employeeNum}
+	</update>
+	
+	<update id="updateEmployeeLoginCheck">
+		UPDATE
+			employee
+		SET
+			login = 0
+		WHERE login = 1
+		AND (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(refresh_datetime) > 300 )
+	</update>
+	
+	<select id="selectEmployeeBranchCallgroup" parameterType="map" resultType="map">
+		SELECT
+			e.num, e.vnum, e.name, e.id, e.work_type AS workType
+			, e.charge, e.branch_num AS branchNum
+			, b.name AS branchName, b.callgroup_num AS callgroupNum
+			, IFNULL(b.calllinker_ip, '') AS calllinkerIp
+			, IFNULL(bcg.group_owner_num, 0) AS groupOwnerNum
+		FROM employee e, branch b
+		LEFT JOIN branch_call_group bcg
+		ON bcg.num = b.callgroup_num
+		WHERE e.del = 0
+		AND e.stop_chk = 0
+		AND e.out_chk = 0
+		AND e.work_type != ''
+		AND e.branch_num = b.num
+		AND e.id = #{userId}
+		<if test="!''.equals(userPw)">
+			AND e.password = #{userPw}
+		</if>
+		LIMIT 1
+	</select>
+	
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+	
+	<!--
+	<task:scheduler id="sampleScheduler" />
+	<task:scheduled-tasks scheduler="sampleScheduler">
+		<task:scheduled ref="sampleWorker" method="doWork" cron="0 * * * * ?" />
+	</task:scheduled-tasks>
+	-->
+	
+	<!--
+	<task:scheduler id="coaliOrderSyncScheduler" />
+	<task:scheduled-tasks scheduler="coaliOrderSyncScheduler">
+		<task:scheduled ref="coaliOrderSyncWorker" method="doWork" cron="5,15,25,35,45,55 * * * * ?" />
+	</task:scheduled-tasks>
+	-->
+	
+	<!-- ************ order share sync *************** -->
+	<task:scheduler id="isOrderSyncScheduler" />
+	<task:scheduled-tasks scheduler="isOrderSyncScheduler">
+		<task:scheduled ref="isOrderSyncWorker" method="doWork" cron="*/15 * * * * ?" />
+	</task:scheduled-tasks>
+	<task:scheduler id="isOrderSyncJyScheduler" />
+	<task:scheduled-tasks scheduler="isOrderSyncJyScheduler">
+		<task:scheduled ref="isOrderSyncJyWorker" method="doWork" cron="4,19,34,49 * * * * ?" />
+	</task:scheduled-tasks>
+	<task:scheduler id="isOrderSyncKqScheduler" />
+	<task:scheduled-tasks scheduler="isOrderSyncKqScheduler">
+		<task:scheduled ref="isOrderSyncKqWorker" method="doWork" cron="6,21,36,51 * * * * ?" />
+	</task:scheduled-tasks>
+	<task:scheduler id="isOrderSyncPwScheduler" />
+	<task:scheduled-tasks scheduler="isOrderSyncPwScheduler">
+		<task:scheduled ref="isOrderSyncPwWorker" method="doWork" cron="7,22,37,52 * * * * ?" />
+	</task:scheduled-tasks>
+	<task:scheduler id="isOrderSyncNoScheduler" />
+	<task:scheduled-tasks scheduler="isOrderSyncNoScheduler">
+		<task:scheduled ref="isOrderSyncNoWorker" method="doWork" cron="10,25,40,55 * * * * ?" />
+	</task:scheduled-tasks>
+	<!-- ************ order share sync *************** -->
+	
+	<task:scheduler id="reservatedReceiveUpdateScheduler" />
+	<task:scheduled-tasks scheduler="reservatedReceiveUpdateScheduler">
+		<task:scheduled ref="reservatedReceiveUpdater" method="doWork" cron="1 * * * * ?" />
+	</task:scheduled-tasks>
+	
+	<task:scheduler id="employeeLoginCheckScheduler" />
+	<task:scheduled-tasks scheduler="employeeLoginCheckScheduler">
+		<task:scheduled ref="employeeLoginChecker" method="doWork" cron="0/5 * * * * ?" />
+	</task:scheduled-tasks>
+	
+	<!--
+	<task:scheduler id="cardMaxxChargeScheduler" />
+	<task:scheduled-tasks scheduler="cardMaxxChargeScheduler">
+		<task:scheduled ref="cardMaxxCharger" method="doWork" cron="7 */5 * * * ?" />
+	</task:scheduled-tasks>
+	-->
+	
+	<task:scheduler id="dailyReceiveCompleteScheduler" />
+	<task:scheduled-tasks scheduler="dailyReceiveCompleteScheduler">
+		<task:scheduled ref="dailyReceiveCompleteWorker" method="doWork" cron="12 10 0 * * ?" />
+	</task:scheduled-tasks>
+	
+	<task:scheduler id="dailyReceiveCompleteSubScheduler" />
+	<task:scheduled-tasks scheduler="dailyReceiveCompleteSubScheduler">
+		<task:scheduled ref="dailyReceiveCompleteSubWorker" method="doWork" cron="12 0 2 * * ?" />
+	</task:scheduled-tasks>
+	
+	<task:scheduler id="dailySharedReceiveCompleteWorkerScheduler" />
+	<task:scheduled-tasks scheduler="dailySharedReceiveCompleteWorkerScheduler">
+		<task:scheduled ref="dailySharedReceiveCompleteWorker" method="doWork" cron="12 10 2 * * ?" />
+	</task:scheduled-tasks>
+	
+	<task:scheduler id="programFeeScheduler" />
+	<task:scheduled-tasks scheduler="programFeeScheduler">
+		<task:scheduled ref="programFeeCharger" method="doWork" cron="12 20 2 * * ?" />
+	</task:scheduled-tasks>
+	
+	<task:scheduler id="employeeDeductionScheduler" />
+	<task:scheduled-tasks scheduler="employeeDeductionScheduler">
+		<task:scheduled ref="employeeDeductionCharger" method="doWork" cron="12 30 2 * * ?" />
+	</task:scheduled-tasks>
+	
+	<task:scheduler id="branchOptionChargeScheduler" />
+	<task:scheduled-tasks scheduler="branchOptionChargeScheduler">
+		<task:scheduled ref="branchOptionCharger" method="doWork" cron="12 40 2 * * ?" />
+	</task:scheduled-tasks>
+	
+	<task:scheduler id="dailyResetScheduler" />
+	<task:scheduled-tasks scheduler="dailyResetScheduler">
+		<task:scheduled ref="dailyResetWorker" method="doWork" cron="12 50 2 * * ?" />
+	</task:scheduled-tasks>
+	
+	<task:scheduler id="smsSendScheduler" />
+	<task:scheduled-tasks scheduler="smsSendScheduler">
+		<task:scheduled ref="smsSender" method="doWork" cron="12 0 14 * * ?" />
+	</task:scheduled-tasks>
+	
+<!-- 	<task:scheduler id="autoBechaScheduler" /> -->
+<!-- 	<task:scheduled-tasks scheduler="autoBechaScheduler"> -->
+<!-- 		<task:scheduled ref="autoBechaWoker" method="doWork" cron="0/5 * * * * ?" /> -->
+<!-- 	</task:scheduled-tasks> -->
+	
+</beans>

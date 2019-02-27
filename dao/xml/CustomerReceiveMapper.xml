@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.totalcall.dao.mapper.CustomerReceiveMapper">
+	
+	<sql id="baseColumnList">
+		r.num, r.status, r.datetime
+		, r.start, r.pickup_time, r.end
+		, r.shuttle, r.quick, r.auto, r.payment
+		, r.fare, r.fare_origin, r.fare_weight, r.fare_etc, r.fare_night, r.fare_rain, r.fare_holiday
+		, r.fare_discount, r.fare_discount2, r.fare_, r.consign_
+		, r.callpass_yn, r.callpass_branch_num
+		, r.serial_num, r.item, r.comment, r.member_id
+		, IFNULL(r.ext_driver, '') AS ext_driver
+		, rc1.cnum AS cnum1, rc1.cname AS cname1, rc1.department, rc1.person AS person1
+		, rc1.tel AS tel1, rc1.phone AS phone1
+		, rc1.loc_juso_num AS client_juso_num
+		, rc1.loc_sido AS client_sido, rc1.loc_gugun AS client_gugun, rc1.loc_dong AS client_dong
+		, rc1.loc_etc AS client_etc, rc1.loc_detail AS client_detail
+		, rc2.cnum AS cnum2, rc2.cname AS cname2, rc2.person AS person2
+		, rc2.loc_juso_num AS start_juso_num
+		, rc2.loc_sido AS start_sido, rc2.loc_gugun AS start_gugun, rc2.loc_dong AS start_dong
+		, rc2.loc_etc AS start_etc, rc2.loc_detail AS start_detail, rc2.loc_position AS start_position
+		, rc3.cnum AS cnum3, rc3.cname AS cname3, rc3.person AS person3
+		, rc3.loc_juso_num AS end_juso_num
+		, rc3.loc_sido AS end_sido, rc3.loc_gugun AS end_gugun, rc3.loc_dong AS end_dong
+		, rc3.loc_etc AS end_etc, rc3.loc_detail AS end_detail, rc3.loc_position AS end_position
+		, IFNULL(e.num, 0) AS driver_num, IFNULL(e.vnum, '') AS driver_vnum
+		<!-- , IFNULL(e.name, '') AS driver_name, IFNULL(e.phone, '') AS driver_phone -->
+		 , IFNULL(r.driver_name, '') AS driver_name, IFNULL(e.phone, '') AS driver_phone 
+	</sql>
+	
+	<select id="selectCustomerReceive" parameterType="map" resultType="map">
+		SELECT
+			<include refid="baseColumnList"/>
+			, cg1.id AS group1_id
+			, cg1.code AS group1_code
+			, ca1.id AS admin_id
+			, ca1.code AS admin_code
+		FROM
+			receive r
+		LEFT OUTER JOIN
+			employee e
+				ON e.num = r.driver_num
+		LEFT OUTER JOIN
+			customer c1
+				ON c1.num = r.cnum1
+		LEFT OUTER JOIN
+			customer_group cg1
+				ON cg1.num = c1.group_num
+		LEFT OUTER JOIN
+			customer_admin ca1
+				ON ca1.num = cg1.admin_num
+			, receive_customer rc1
+			, receive_customer rc2
+			, receive_customer rc3
+		WHERE rc1.receive_num = r.num
+		AND rc1.rcv_cust_type = 'client'
+		AND rc1.cnum = #{customerNum}
+		AND rc2.receive_num = r.num
+		AND rc2.rcv_cust_type = 'start'
+		AND rc3.receive_num = r.num
+		AND rc3.rcv_cust_type = 'end'
+		AND r.datetime BETWEEN DATE_FORMAT('${startDate}', '%Y-%m-%d 00:00:00') AND DATE_FORMAT('${endDate}', '%Y-%m-%d 23:59:59')
+		AND r.del = 0
+		AND
+			(
+				r.branch_num = #{branchNum}
+				OR
+					(
+						r.callpass_yn = 'Y'
+						AND r.callpass_branch_num = #{branchNum}
+					)
+			)
+		<if test='loginType eq -1'>
+			AND r.status = '종료'
+		</if>
+		<if test="loginType gt -1">
+			AND r.status != '취소'
+		</if>
+		<if test="'SSS'.equals(reportType)">
+			AND r.payment = '외상'
+		</if>
+		<if test="'credit'.equals(payType)">
+			AND ( r.payment = '외상' OR r.payment = '송금' )
+		</if>
+		<if test="'cash'.equals(payType)">
+			AND ( r.payment != '외상' AND r.payment != '송금' )
+		</if>
+		<if test="searchWord != null">
+			AND
+				(
+					rc1.cname LIKE '%${searchWord}%'
+					OR rc1.department LIKE '%${searchWord}%'
+					OR rc1.person LIKE '%${searchWord}%'
+					OR rc1.loc_dong LIKE '%${searchWord}%'
+					OR rc2.cname LIKE '%${searchWord}%'
+					OR rc2.person LIKE '%${searchWord}%'
+					OR rc2.loc_dong LIKE '%${searchWord}%'
+					OR rc3.cname LIKE '%${searchWord}%'
+					OR rc3.person LIKE '%${searchWord}%'
+					OR rc3.loc_dong LIKE '%${searchWord}%'
+				)
+		</if>
+	</select>
+	
+	<select id="selectCustomerGroupReceive" parameterType="map" resultType="map">
+		SELECT
+			r1.*
+			, cg2.id AS group2_id
+			, cg2.code AS group2_code
+			, cg3.id AS group3_id
+			, cg3.code AS group3_code
+		FROM
+			(
+				SELECT
+					r0.*
+					, cg1.id AS group1_id
+					, cg1.code AS group1_code
+					, ca1.id AS admin_id
+					, ca1.code AS admin_code
+				FROM
+					(
+						SELECT
+							<include refid="baseColumnList"/>
+						FROM
+							receive r
+						LEFT OUTER JOIN
+							receive_customer rc1
+								ON rc1.receive_num = r.num
+								AND rc1.rcv_cust_type = 'client'
+						LEFT OUTER JOIN
+							receive_customer rc2
+								ON rc2.receive_num = r.num
+								AND rc2.rcv_cust_type = 'start'
+						LEFT OUTER JOIN
+							receive_customer rc3
+								ON rc3.receive_num = r.num
+								AND rc3.rcv_cust_type = 'end'
+						LEFT OUTER JOIN
+							employee e
+								ON e.num = r.driver_num
+						WHERE r.datetime BETWEEN DATE_FORMAT('${startDate}', '%Y-%m-%d 00:00:00') AND DATE_FORMAT('${endDate}', '%Y-%m-%d 23:59:59')
+						AND r.del = 0
+						AND
+							(
+								r.branch_num = #{branchNum}
+								OR
+									(
+										r.callpass_yn = 'Y'
+										AND r.callpass_branch_num = #{branchNum}
+									)
+							)
+						<if test="loginType eq -1">
+							AND r.status = '종료'
+						</if>
+						<if test="loginType gt -1">
+							AND r.status != '취소'
+						</if>
+						<if test="'SSS'.equals(reportType)">
+							AND r.payment = '외상'
+						</if>
+						<if test="'credit'.equals(payType)">
+							AND ( r.payment = '외상' OR r.payment = '송금' )
+						</if>
+						<if test="'cash'.equals(payType)">
+							AND ( r.payment != '외상' AND r.payment != '송금' )
+						</if>
+						<if test="searchWord != null">
+							AND
+								(
+									rc1.cname LIKE '%${searchWord}%'
+									OR rc1.department LIKE '%${searchWord}%'
+									OR rc1.person LIKE '%${searchWord}%'
+									OR rc1.loc_dong LIKE '%${searchWord}%'
+									OR rc2.cname LIKE '%${searchWord}%'
+									OR rc2.person LIKE '%${searchWord}%'
+									OR rc2.loc_dong LIKE '%${searchWord}%'
+									OR rc3.cname LIKE '%${searchWord}%'
+									OR rc3.person LIKE '%${searchWord}%'
+									OR rc3.loc_dong LIKE '%${searchWord}%'
+								)
+						</if>
+					) r0
+					, customer c1
+					, customer_group cg1
+				LEFT OUTER JOIN
+					customer_admin ca1
+						ON cg1.admin_num = ca1.num
+				WHERE r0.cnum1 = c1.num
+				AND c1.group_num = cg1.num
+				AND cg1.num = #{customerGroupNum}
+			) r1
+		LEFT OUTER JOIN
+			customer c2
+				ON c2.num = r1.cnum2
+		LEFT OUTER JOIN
+			customer_group cg2
+				ON cg2.num = c2.group_num
+		LEFT OUTER JOIN
+			customer c3
+				ON c3.num = r1.cnum3
+		LEFT OUTER JOIN
+			customer_group cg3
+				ON cg3.num = c3.group_num
+	</select>
+	
+	<select id="selectCustomerAdminReceive" parameterType="map" resultType="map">
+		SELECT
+			r1.*
+			, cg2.id AS group2_id
+			, cg2.code AS group2_code
+			, cg3.id AS group3_id
+			, cg3.code AS group3_code
+		FROM
+			(
+				SELECT
+					r0.*
+					, cg1.id AS group1_id
+					, cg1.code AS group1_code
+					, ca1.id AS admin_id
+					, ca1.code AS admin_code
+				FROM
+					(
+						SELECT
+							<include refid="baseColumnList"/>
+						FROM
+							receive r
+						LEFT OUTER JOIN
+							receive_customer rc1
+								ON rc1.receive_num = r.num
+								AND rc1.rcv_cust_type = 'client'
+						LEFT OUTER JOIN
+							receive_customer rc2
+								ON rc2.receive_num = r.num
+								AND rc2.rcv_cust_type = 'start'
+						LEFT OUTER JOIN
+							receive_customer rc3
+								ON rc3.receive_num = r.num
+								AND rc3.rcv_cust_type = 'end'
+						LEFT OUTER JOIN
+							employee e
+								ON e.num = r.driver_num
+						WHERE r.datetime BETWEEN DATE_FORMAT('${startDate}', '%Y-%m-%d 00:00:00') AND DATE_FORMAT('${endDate}', '%Y-%m-%d 23:59:59')
+						AND r.del = 0
+						AND
+							(
+								r.branch_num = #{branchNum}
+								OR
+									(
+										r.callpass_yn = 'Y'
+										AND r.callpass_branch_num = #{branchNum}
+									)
+							)
+						<if test="loginType eq -1">
+							AND r.status = '종료'
+						</if>
+						<if test="loginType gt -1">
+							AND r.status != '취소'
+						</if>
+						<if test="'SSS'.equals(reportType)">
+							AND r.payment = '외상'
+						</if>
+						<if test="'credit'.equals(payType)">
+							AND ( r.payment = '외상' OR r.payment = '송금' )
+						</if>
+						<if test="'cash'.equals(payType)">
+							AND ( r.payment != '외상' AND r.payment != '송금' )
+						</if>
+						<if test="searchWord != null">
+							AND
+								(
+									rc1.cname LIKE '%${searchWord}%'
+									OR rc1.department LIKE '%${searchWord}%'
+									OR rc1.person LIKE '%${searchWord}%'
+									OR rc1.loc_dong LIKE '%${searchWord}%'
+									OR rc2.cname LIKE '%${searchWord}%'
+									OR rc2.person LIKE '%${searchWord}%'
+									OR rc2.loc_dong LIKE '%${searchWord}%'
+									OR rc3.cname LIKE '%${searchWord}%'
+									OR rc3.person LIKE '%${searchWord}%'
+									OR rc3.loc_dong LIKE '%${searchWord}%'
+								)
+						</if>
+					) r0
+					, customer c1
+					, customer_group cg1
+					, customer_admin ca1
+				WHERE r0.cnum1 = c1.num
+				AND c1.group_num = cg1.num
+				AND cg1.admin_num = ca1.num
+				AND ca1.num = #{customerAdminNum}
+			) r1
+		LEFT OUTER JOIN
+			customer c2
+				ON c2.num = r1.cnum2
+		LEFT OUTER JOIN
+			customer_group cg2
+				ON cg2.num = c2.group_num
+		LEFT OUTER JOIN
+			customer c3
+				ON c3.num = r1.cnum3
+		LEFT OUTER JOIN
+			customer_group cg3
+				ON cg3.num = c3.group_num
+	</select>
+	
+	<select id="selectCustomerMasterReceive" parameterType="map" resultType="map">
+		SELECT
+			r1.*
+			, cg2.id AS group2_id
+			, cg2.code AS group2_code
+			, cg3.id AS group3_id
+			, cg3.code AS group3_code
+		FROM
+			(
+				SELECT
+					r0.*
+					, c1.id AS id
+					, cg1.id AS group1_id
+					, cg1.code AS group1_code
+					, ca1.id AS admin_id
+					, ca1.code AS admin_code
+				FROM
+					(
+						SELECT
+							<include refid="baseColumnList"/>
+						FROM
+							receive r
+						LEFT OUTER JOIN
+							receive_customer rc1
+								ON rc1.receive_num = r.num
+								AND rc1.rcv_cust_type = 'client'
+						LEFT OUTER JOIN
+							receive_customer rc2
+								ON rc2.receive_num = r.num
+								AND rc2.rcv_cust_type = 'start'
+						LEFT OUTER JOIN
+							receive_customer rc3
+								ON rc3.receive_num = r.num
+								AND rc3.rcv_cust_type = 'end'
+						LEFT OUTER JOIN
+							employee e
+								ON e.num = r.driver_num
+						WHERE r.datetime BETWEEN DATE_FORMAT('${startDate}', '%Y-%m-%d 00:00:00') AND DATE_FORMAT('${endDate}', '%Y-%m-%d 23:59:59')
+						AND r.del = 0
+						AND
+							(
+								r.branch_num = #{branchNum}
+								OR
+									(
+										r.callpass_yn = 'Y'
+										AND r.callpass_branch_num = #{branchNum}
+									)
+							)
+						<if test="loginType eq -1">
+							AND r.status = '종료'
+						</if>
+						<if test="loginType gt -1">
+							AND r.status != '취소'
+						</if>
+						<if test="'SSS'.equals(reportType)">
+							AND r.payment = '외상'
+						</if>
+						<if test="'credit'.equals(payType)">
+							AND ( r.payment = '외상' OR r.payment = '송금' )
+						</if>
+						<if test="'cash'.equals(payType)">
+							AND ( r.payment != '외상' AND r.payment != '송금' )
+						</if>
+						<if test="searchWord != null">
+							AND
+								(
+									rc1.cname LIKE '%${searchWord}%'
+									OR rc1.department LIKE '%${searchWord}%'
+									OR rc1.person LIKE '%${searchWord}%'
+									OR rc1.loc_dong LIKE '%${searchWord}%'
+									OR rc2.cname LIKE '%${searchWord}%'
+									OR rc2.person LIKE '%${searchWord}%'
+									OR rc2.loc_dong LIKE '%${searchWord}%'
+									OR rc3.cname LIKE '%${searchWord}%'
+									OR rc3.person LIKE '%${searchWord}%'
+									OR rc3.loc_dong LIKE '%${searchWord}%'
+								)
+						</if>
+					) r0
+					, customer c1
+					, customer_group cg1
+					, customer_admin ca1
+				WHERE r0.cnum1 = c1.num
+				AND c1.group_num = cg1.num
+				AND cg1.admin_num = ca1.num
+				AND ca1.master_num = #{customerMasterNum}
+			) r1
+		LEFT OUTER JOIN
+			customer c2
+				ON c2.num = r1.cnum2
+		LEFT OUTER JOIN
+			customer_group cg2
+				ON cg2.num = c2.group_num
+		LEFT OUTER JOIN
+			customer c3
+				ON c3.num = r1.cnum3
+		LEFT OUTER JOIN
+			customer_group cg3
+				ON cg3.num = c3.group_num
+	</select>
+	
+	<select id="searchCustomerReceive" parameterType="map" resultType="map">
+		SELECT
+			<include refid="baseColumnList"/>
+			, cg1.id AS group1_id
+			, cg1.code AS group1_code
+			, ca1.id AS admin_id
+			, ca1.code AS admin_code
+		FROM
+			receive r
+		LEFT OUTER JOIN
+			receive_customer rc1
+				ON rc1.receive_num = r.num
+				AND rc1.rcv_cust_type = 'client'
+		LEFT OUTER JOIN
+			receive_customer rc2
+				ON rc2.receive_num = r.num
+				AND rc2.rcv_cust_type = 'start'
+		LEFT OUTER JOIN
+			receive_customer rc3
+				ON rc3.receive_num = r.num
+				AND rc3.rcv_cust_type = 'end'
+		LEFT OUTER JOIN
+			employee e
+				ON e.num = r.driver_num
+		LEFT OUTER JOIN
+			customer c1
+				ON c1.num = r.cnum1
+		LEFT OUTER JOIN
+			customer_group cg1
+				ON cg1.num = c1.group_num
+		LEFT OUTER JOIN
+			customer_admin ca1
+				ON ca1.num = cg1.admin_num
+		WHERE r.datetime BETWEEN DATE_FORMAT('${startDate}', '%Y-%m-%d 00:00:00') AND DATE_FORMAT('${endDate}', '%Y-%m-%d 23:59:59')
+		AND r.del = 0
+		AND
+			(
+				r.branch_num = #{branchNum}
+				OR
+					(
+						r.callpass_yn = 'Y'
+						AND r.callpass_branch_num = #{branchNum}
+					)
+			)
+		AND r.status = '종료'
+		<if test="'credit'.equals(payType)">
+			AND ( r.payment = '외상' OR r.payment = '송금' )
+		</if>
+		<if test="'cash'.equals(payType)">
+			AND ( r.payment != '외상' AND r.payment != '송금' )
+		</if>
+		<if test="searchWord != null">
+			AND rc1.cname LIKE '%${searchWord}%'
+		</if>
+	</select>
+	
+	<select id="selectNonMemberReceive" parameterType="map" resultType="map">
+		SELECT
+			<include refid="baseColumnList"/>
+			, cg1.id AS group1_id
+			, cg1.code AS group1_code
+			, ca1.id AS admin_id
+			, ca1.code AS admin_code
+		FROM
+			receive r
+		LEFT OUTER JOIN
+			employee e
+				ON e.num = r.driver_num
+		LEFT OUTER JOIN
+			customer c1
+				ON c1.num = r.cnum1
+		LEFT OUTER JOIN
+			customer_group cg1
+				ON cg1.num = c1.group_num
+		LEFT OUTER JOIN
+			customer_admin ca1
+				ON ca1.num = cg1.admin_num
+			, receive_customer rc1
+			, customer c
+			, receive_customer rc2
+			, receive_customer rc3
+		WHERE rc1.receive_num = r.num
+		AND rc1.rcv_cust_type = 'client'
+		AND rc1.cnum = c.num
+		AND c.branch_num = #{branchNum}
+		AND REPLACE(c.tel, '-', '') = #{telNum}
+		AND c.pw = #{pass}
+		AND rc2.receive_num = r.num
+		AND rc2.rcv_cust_type = 'start'
+		AND rc3.receive_num = r.num
+		AND rc3.rcv_cust_type = 'end'
+		AND r.datetime BETWEEN DATE_FORMAT('${startDate}', '%Y-%m-%d 00:00:00') AND DATE_FORMAT('${endDate}', '%Y-%m-%d 23:59:59')
+		AND r.del = 0
+		AND
+			(
+				r.branch_num = #{branchNum}
+				OR
+					(
+						r.callpass_yn = 'Y'
+						AND r.callpass_branch_num = #{branchNum}
+					)
+			)
+		<if test="searchWord != null">
+			AND
+				(
+					rc1.cname LIKE '%${searchWord}%'
+					OR rc1.department LIKE '%${searchWord}%'
+					OR rc1.person LIKE '%${searchWord}%'
+					OR rc1.loc_dong LIKE '%${searchWord}%'
+					OR rc2.cname LIKE '%${searchWord}%'
+					OR rc2.person LIKE '%${searchWord}%'
+					OR rc2.loc_dong LIKE '%${searchWord}%'
+					OR rc3.cname LIKE '%${searchWord}%'
+					OR rc3.person LIKE '%${searchWord}%'
+					OR rc3.loc_dong LIKE '%${searchWord}%'
+				)
+		</if>
+	</select>
+	
+	<select id="selectReceiveDetail" parameterType="int" resultType="map">
+		SELECT
+			r.num, r.status
+			, r.auto AS vehicleType, r.shuttle, r.quick, r.payment
+			, r.fare_, r.fare_origin AS fareOrigin
+			, r.fare_weight AS fareWeight
+			, r.fare_night AS fareNight
+			, r.fare_rain AS fareRain
+			, r.fare_holiday AS fareHoliday
+			, r.fare_discount AS fareDiscount
+			, r.consign_
+			, r.start
+			, r.callpass_yn AS callpassYn
+			, IFNULL(CONCAT(r.item, '/', r.comment), '') AS comment
+			, DATE_FORMAT(r.datetime, '%H:%i') AS requestTime
+			, r.driver_num AS driverNum
+			, IFNULL(c1.driver_memo, '') AS client_driver_memo
+			, rc1.cnum AS client_cnum
+			, rc1.cname AS client_cname
+			, rc1.department AS client_department
+			, rc1.person AS client_person
+			, rc1.tel AS client_tel
+			, rc1.phone AS client_phone
+			, rc1.loc_sido AS client_sido
+			, rc1.loc_gugun AS client_gugun
+			, rc1.loc_dong AS client_dong
+			, IFNULL(rc1.loc_dong_num, '') AS client_dong_num
+			, rc1.loc_position AS client_position
+			, rc1.loc_building AS client_building
+			, rc1.loc_floor AS client_floor
+			, IFNULL(rc1.loc_etc, '') AS client_etc
+			, IFNULL(rc1.loc_detail, '') AS client_detail
+			, IFNULL(c2.driver_memo, '') AS start_driver_memo
+			, rc2.cnum AS start_cnum
+			, rc2.cname AS start_cname
+			, rc2.department AS start_department
+			, rc2.person AS start_person
+			, rc2.tel AS start_tel
+			, rc2.phone AS start_phone
+			, rc2.loc_sido AS start_sido
+			, rc2.loc_gugun AS start_gugun
+			, rc2.loc_dong AS start_dong
+			, IFNULL(rc2.loc_dong_num, '') AS start_dong_num
+			, rc2.loc_position AS start_position
+			, rc2.loc_building AS start_building
+			, rc2.loc_floor AS start_floor
+			, IFNULL(rc2.loc_etc, '') AS start_etc
+			, IFNULL(rc2.loc_detail, '') AS start_detail
+			, IFNULL(c3.driver_memo, '') AS end_driver_memo
+			, rc3.cnum AS end_cnum
+			, rc3.cname AS end_cname
+			, rc3.department AS end_department
+			, rc3.person AS end_person
+			, rc3.tel AS end_tel
+			, rc3.phone AS end_phone
+			, rc3.loc_sido AS end_sido
+			, rc3.loc_gugun AS end_gugun
+			, rc3.loc_dong AS end_dong
+			, IFNULL(rc3.loc_dong_num, '') AS end_dong_num
+			, rc3.loc_dong_num AS end_dong_num
+			, rc3.loc_position AS end_position
+			, rc3.loc_building AS end_building
+			, rc3.loc_floor AS end_floor
+			, IFNULL(rc3.loc_etc, '') AS end_etc
+			, IFNULL(rc3.loc_detail, '') AS end_detail
+			, r.nTNo
+			, IFNULL(so.nCompany, 0) AS nCompany
+			, IFNULL(so.sCompanyName, '') AS sCompanyName
+			, IFNULL(so.sCompanyOfficeTel, '') AS sCompanyOfficeTel
+			, b.num AS branchNum, b.name AS branchName, b.tel AS branchTel
+			, IFNULL(e.work_type, '') AS registerType
+			, IFNULL(e.name, '') AS registerName
+			, IFNULL(e.phone, '') AS registerPhone
+		FROM
+			receive AS r
+		LEFT OUTER JOIN
+			customer c1
+				ON c1.num = r.cnum1
+		LEFT OUTER JOIN
+			customer c2
+				ON c2.num = r.cnum2
+		LEFT OUTER JOIN
+			customer c3
+				ON c3.num = r.cnum3
+		LEFT OUTER JOIN
+			share_order so
+				ON so.nTNo = r.nTNo
+		LEFT OUTER JOIN
+			receive_customer AS rc1
+				ON rc1.receive_num = r.num
+				AND rc1.rcv_cust_type = 'client'
+		LEFT OUTER JOIN
+			receive_customer AS rc2
+				ON rc2.receive_num = r.num
+				AND rc2.rcv_cust_type = 'start'
+		LEFT OUTER JOIN
+			receive_customer AS rc3
+				ON rc3.receive_num = r.num
+				AND rc3.rcv_cust_type = 'end'
+		LEFT OUTER JOIN
+			employee e
+				ON e.id = r.member_id
+			, branch AS b
+		WHERE r.del = 0
+		AND r.num = #{receiveNum}
+		AND r.branch_num = b.num
+	</select>
+	
+</mapper>
