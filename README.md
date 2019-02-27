@@ -1,2 +1,9 @@
 # chae
 - java
+- jsp
+- spirng
+- Mybatis
+- Maven
+- javascript
+- MySql
+- linux
